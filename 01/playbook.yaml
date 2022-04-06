@@ -1,0 +1,41 @@
+---
+- name: Provision instances
+  hosts: webserver01
+  remote_user: ubuntu
+  become: yes
+
+  #vars_files:
+  #- group_vars/all
+
+  tasks:
+  
+  - name: Ansible Update Cache and Upgrade all Packages
+    register: updatesys
+    apt:
+      name: "*"
+      state: latest
+      update_cache: yes
+
+  - name: Display the last line of the previous task to check the stats
+    debug:
+      msg:  "{{updatesys.stdout_lines|last}}"
+
+  - name: Install packages
+    apt:
+      name: "{{item}}"
+      state: present
+    with_items:
+      - git
+      - curl
+      - wget
+      - nodejs
+
+  - name: Ansible shell module multiple commands
+    shell: 'curl -L https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | sudo bash'
+
+
+  # - name: Remove a package
+  #   apt:
+  #     pkg: ansible
+  #     state: absent
+  #   become: true
