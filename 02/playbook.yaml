@@ -1,0 +1,47 @@
+---
+- name: Provision instances
+  hosts: webserver01
+  remote_user: ubuntu
+  become: yes
+
+  tasks:
+  
+  - name: Ansible Update Cache and Upgrade all Packages
+    register: updatesys
+    apt:
+      name: "*"
+      state: latest
+      update_cache: yes
+
+  - name: Display the last line of the previous task to check the stats
+    debug:
+      msg:  "{{updatesys.stdout_lines|last}}"
+
+  - name: Install packages with apt
+    apt:
+      name: "{{item}}"
+      state: present
+    with_items:
+      - gnupg2
+      - pass
+      - npm
+
+  - name: Install po2json with npm
+    community.general.npm:
+      name: po2json
+      #version: '1.6.1'
+      global: yes
+      state: present
+
+  - name: Install pybabel for Python 3
+    pip:
+      name: pybabel
+      executable: pip3
+
+
+
+  # - name: Remove a package
+  #   apt:
+  #     pkg: ansible
+  #     state: absent
+  #   become: true
