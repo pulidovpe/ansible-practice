@@ -14,3 +14,9 @@ ansible-playbook -i ./01/inventory.yaml ./01/playbook.yaml
 ```Shell
 ansible-playbook -i ./02/inventory.yaml ./02/playbook.yaml
 ```
+
+#### How to connect to an EC2 instance on AWS for:
+- Set an SSH key for clone a private repository.
+```Shell
+ansible-playbook -i ./03/inventory.yaml ./03/playbook.yaml
+```

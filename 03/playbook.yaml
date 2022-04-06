@@ -1,0 +1,40 @@
+---
+
+- name: Provision instances
+  hosts: webserver01
+  remote_user: ubuntu
+  become: yes
+
+  tasks:
+
+  - name: Add bitbucket ssh key
+    copy: >
+      src=~/.ssh/uptime_rsa
+      dest=/home/ubuntu/.ssh/id_rsa
+      owner=ubuntu
+      group=ubuntu
+      mode=0600
+  
+  - name: Configure ssh to use ansible key for bitbucket
+    template: >
+      src=./ssh_config.j2
+      dest=/home/ubuntu/.ssh/config
+      owner=ubuntu
+      group=ubuntu
+      mode=0644
+
+  - name: Clone repo dashboard
+    git:
+      repo: "git@bitbucket.org:uptimeanalytics/dashboard-script.git"
+      dest: /home/ubuntu/dashboard-script
+      accept_hostkey: yes
+      key_file: /home/ubuntu/.ssh/id_rsa
+    become_user: ubuntu
+
+  - name: Clone repo test
+    git:
+      repo: "git@bitbucket.org:uptimeanalytics/test-script.git"
+      dest: /home/ubuntu/test-script
+      accept_hostkey: yes
+      key_file: /home/ubuntu/.ssh/id_rsa
+    become_user: ubuntu
